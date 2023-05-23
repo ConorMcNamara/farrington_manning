@@ -62,7 +62,7 @@ def _get_z(diff_ml: float, delta: float, sd_diff: float) -> float:
     return (diff_ml - delta) / sd_diff
 
 
-def _get_ci(delta, diff_ml, sd_diff, alpha_mod) -> float:
+def _get_ci(delta: float, diff_ml: float, sd_diff: float, alpha_mod: float) -> float:
     """Used to get the upper and lower bounds of the confidence interval
 
     Parameters
@@ -78,7 +78,7 @@ def _get_ci(delta, diff_ml, sd_diff, alpha_mod) -> float:
 
     Returns
     -------
-
+    The confidence interval of our test
     """
     z = _get_z(diff_ml, delta, sd_diff)
     return 2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod
@@ -97,9 +97,9 @@ def farrington_manning(
 
     Parameters
     ----------
-    group1: list or numpy array
+    group1: list, tuple or numpy array
         A logical vector of data from Group 1, where True indicates a success
-    group2
+    group2: list, tuple or numpy array
         A logical vector of data from Group 2, where True indicates a success
     delta: float, default=0.0
         The rate difference under the null hypothesis
