@@ -12,15 +12,15 @@ def _get_sd_diff_ML_null(n1: int, n2: int, p1_ml: float, p2_ml: float, delta: fl
 
     Parameters
     ----------
-    n1: int
+    n1 : int
         Number of users in Group 1
-    n2: int
+    n2 : int
         Number of users in Group 2
-    p1_ml: float
+    p1_ml : float
         The probability of success in Group 1
-    p2_ml: float
+    p2_ml : float
         The probability of success in Group 2
-    delta: float
+    delta : float
         The rate difference under the null hypothesis
 
     Returns
@@ -48,11 +48,11 @@ def _get_z(diff_ml: float, delta: float, sd_diff: float) -> float:
 
     Parameters
     ----------
-    diff_ml: float
+    diff_ml : float
         The standard deviation of the rate difference under the null hypothesis
-    delta: float
+    delta : float
         The rate difference under the null hypothesis
-    sd_diff: float
+    sd_diff : float
         The standard deviation of the rate difference under the null hypothesis
 
     Returns
@@ -67,14 +67,14 @@ def _get_ci(delta: float, diff_ml: float, sd_diff: float, alpha_mod: float) -> f
 
     Parameters
     ----------
-    delta: float
+    delta : float
         The rate difference under the null hypothesis
-    diff_ml: float
+    diff_ml : float
         The standard deviation of the rate difference under the null hypothesis
-    sd_diff: float
+    sd_diff : float
         The standard deviation of the rate difference under the null hypothesis
-    alpha_mod:  float
-        The value of our alpha level. 
+    alpha_mod : float
+        The value of our alpha level.
 
     Returns
     -------
@@ -97,15 +97,15 @@ def farrington_manning(
 
     Parameters
     ----------
-    group1: list, tuple or numpy array
+    group1 : list, tuple or numpy array
         A logical vector of data from Group 1, where True indicates a success
-    group2: list, tuple or numpy array
+    group2 : list, tuple or numpy array
         A logical vector of data from Group 2, where True indicates a success
-    delta: float, default=0.0
+    delta : float, default=0.0
         The rate difference under the null hypothesis
-    alternative: {'two-sided', 'less', 'greater'}
+    alternative : {'two-sided', 'less', 'greater'}
         Character string indicating the alternative to use, either of "two-sided", "less", "greater"
-    alpha: float, default=0.05
+    alpha : float, default=0.05
         The significance level (acceptable error of the first kind), a two-sided confidence interval is returned
         with confidence level 1 - 2*alpha, such that the lower bound is a valid one-sided confidence interval at
         the confidence level 1 - alpha.
