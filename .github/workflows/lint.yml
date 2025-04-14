@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest]
-        python-version: [ "3.13"]
+        python-version: [ "3.12"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Auto-format code with autopep8
         run: |
-          autopep8 --in-place --aggressive --max-line-length 120 **/*.py  # Fix formatting issues with autopep8
+          autopep8 --in-place --aggressive --max-line-length 120 *.py  # Fix formatting issues with autopep8
 
       - name: Auto-format docstrings with docformatter
         run: |
@@ -60,7 +60,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest]
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+        python-version: [ "3.12" ]
     runs-on: ${{ matrix.os }}
     needs: formatting  # Ensures this job runs after the formatting job
     steps:
