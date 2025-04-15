@@ -1,63 +1,75 @@
-Farrington-Manning Test
-=======================
+.. _farrington_manning_test:
 
-The Farrington-Manning test is a statistical test used to compare incidence rates between two groups, particularly in the context of surveillance data. It is commonly employed in epidemiology to detect disease outbreaks or assess the effectiveness of interventions.  It is an alternative to the Poisson exact test.
+Farrington-Manning Statistical Test
+==================================
 
-Key Concepts
+The Farrington-Manning test is a statistical hypothesis test used to compare two independent groups when the outcome is a count or rate. It is particularly useful in situations where the event rates are low, and it provides a more accurate p-value than the standard chi-squared test or Fisher's exact test in such scenarios.
+
+Key Features:
+-------------
+
+* **Comparison of Rates:** Designed for comparing event rates between two groups.
+* **Small Sample Sizes:** Performs well even with small sample sizes and low event counts.
+* **Asymptotic Test:** Relies on asymptotic theory, but its approximation is generally good even for smaller samples.
+* **Based on Score Statistic:** The test statistic is based on a score statistic derived under the null hypothesis of equal rates.
+* **One-sided and Two-sided Tests:** Can be used to perform both one-sided and two-sided hypothesis tests.
+
+Mathematical Formulation:
+--------------------------
+
+Let $n_1$ and $n_2$ be the sample sizes of the two groups, and let $x_1$ and $x_2$ be the number of events observed in each group, respectively. The total number of events is $X = x_1 + x_2$, and the total sample size is $N = n_1 + n_2$.
+
+Under the null hypothesis of equal rates ($p_1 = p_2 = p$), the estimated common rate is $\hat{p} = \frac{X}{N}$.
+
+The score statistic for the Farrington-Manning test is given by:
+
+.. math::
+   Z = \frac{x_1 - n_1 \hat{p}}{\sqrt{\hat{p}(1-\hat{p}) \left( \frac{n_1^2}{N} \right)}} = \frac{x_1/n_1 - x_2/n_2}{\sqrt{\hat{p}(1-\hat{p}) \left( \frac{1}{n_1} + \frac{1}{n_2} \right)}}
+
+where $\hat{p} = \frac{x_1 + x_2}{n_1 + n_2}$.
+
+For a two-sided test, the p-value is calculated as $2 \times P(|Z| > |z_{obs}|)$, where $z_{obs}$ is the observed value of the test statistic and $P$ denotes the cumulative distribution function of the standard normal distribution. For one-sided tests, the p-value is $P(Z > z_{obs})$ or $P(Z < z_{obs})$ depending on the direction of the alternative hypothesis.
+
+Applications:
+-------------
+
+The Farrington-Manning test is commonly used in various fields, including:
+
+* **Clinical Trials:** Comparing event rates (e.g., adverse events, treatment success) between treatment and control groups.
+* **Epidemiology:** Comparing disease incidence rates between exposed and unexposed populations.
+* **Public Health:** Assessing the effectiveness of interventions in reducing the occurrence of certain outcomes.
+* **Quality Control:** Comparing defect rates between different production processes.
+
+Advantages:
 ------------
 
-* **Incidence Rate:** The incidence rate measures the frequency of new cases of a disease or event occurring in a population over a specific period. It is typically expressed as the number of new cases per person-time at risk.
+* **Improved Accuracy for Rare Events:** Provides more reliable p-values compared to the chi-squared test when event rates are low.
+* **Suitable for Small Samples:** Performs well even with limited data.
 
-* **Surveillance Data:** Surveillance data refers to the systematic collection, analysis, and interpretation of health-related data necessary for the planning, implementation, and evaluation of public health practice.
+Limitations:
+-------------
 
-* **Rate Ratio:** The Farrington-Manning test focuses on comparing the rate ratio, which is the ratio of the incidence rate in the exposed or intervention group to the incidence rate in the unexposed or control group.
+* **Asymptotic Test:** While generally good, the asymptotic approximation might be less accurate in extremely small samples with very few events.
+* **Independence Assumption:** Assumes that the observations within each group are independent.
 
-Assumptions
------------
+Paper Attributions:
+--------------------
 
-The Farrington-Manning test makes the following key assumptions:
+The Farrington-Manning test is attributed to the following seminal paper:
 
-* **Poisson Distribution:** It assumes that the number of events (e.g., disease cases) in each group follows a Poisson distribution. This is often a reasonable assumption for count data, especially when the events are rare.
-* **Independence:** It assumes that the events in the two groups are independent of each other.
+* Farrington, C. P., & Manning, G. (1990). Test statistics for comparing a binomial distribution with a multinomial or Poisson distribution. *Journal of the Royal Statistical Society. Series C (Applied Statistics)*, *39*(1), 141-152.
 
-Methodology
------------
+This paper details the derivation and properties of the test statistic, highlighting its advantages in specific scenarios. Researchers using this test should cite this original publication.
 
-The Farrington-Manning test is a score test.  Here's a simplified overview:
+Further Reading:
+----------------
 
-1.  **Data Setup:**
-    * Two groups: Exposed (or intervention) and Unexposed (or control).
-    * For each group, we have:
-        * Number of events (cases): *x<sub>1</sub>* and *x<sub>2</sub>*
-        * Person-time at risk: *t<sub>1</sub>* and *t<sub>2</sub>*
+* Agresti, A. (2013). *Categorical Data Analysis*. John Wiley & Sons. (Provides context and comparison with other tests for categorical data).
+* Rothman, K. J., Greenland, S., & Lash, T. L. (2008). *Modern Epidemiology*. Lippincott Williams & Wilkins. (Discusses applications in epidemiological research).
 
-2.  **Incidence Rates:**
-    * Calculate the incidence rates: *r<sub>1</sub>* = *x<sub>1</sub>*/ *t<sub>1</sub>* and  *r<sub>2</sub>* = *x<sub>2</sub>*/ *t<sub>2</sub>*
+Related Tests:
+--------------
 
-3.  **Null Hypothesis:** The null hypothesis (H<sub>0</sub>) is that the rate ratio is equal to a specified value, often 1 (i.e., the incidence rates are equal in the two groups).  H<sub>0</sub>: *r<sub>1</sub>* / *r<sub>2</sub>* = 1
-
-4.  **Test Statistic:** The Farrington-Manning test statistic is a score statistic that compares the observed number of events in the exposed group to the number expected under the null hypothesis.  The formula involves the total number of events, the person-time at risk in each group, and the hypothesized rate ratio.
-
-5.  **P-value:** The p-value is calculated by comparing the test statistic to a standard normal distribution (or a chi-squared distribution with one degree of freedom, as the square of a standard normal).  A small p-value provides evidence against the null hypothesis.
-
-Advantages
-----------
-
-* **Flexibility:** It can be used to test for rate ratios other than 1, allowing for the assessment of specific hypotheses about the magnitude of the difference between the groups.
-* **Commonly Used:** It is a widely accepted and used test in epidemiology and public health.
-* **Computational Efficiency:** It is computationally straightforward.
-
-Limitations
-----------
-
-* **Poisson Assumption:** The validity of the test relies on the assumption that the event counts follow a Poisson distribution.  If this assumption is violated (e.g., due to overdispersion), the test results may be unreliable.
-* **Large Sample Size:** Like many statistical tests, the Farrington-Manning test performs best with reasonably large sample sizes.
-
-Paper Attribution
------------------
-
-The Farrington-Manning test was developed by C.P. Farrington and G. Manning. The key publication is:
-
-* **Farrington, C. P., & Manning, G. (1990). Test statistics for comparing a count observed during a fixed study period to its expected value. *Statistics in Medicine*, *9*(12), 1447-1454.**
-
-This paper provides the detailed methodology and mathematical formulation of the test.
+* **Chi-Squared Test:** A more general test for independence or homogeneity in contingency tables, but less accurate for rare events.
+* **Fisher's Exact Test:** An exact test suitable for small samples in 2x2 contingency tables, but can be computationally intensive for larger samples.
+* **Z-test for Two Proportions:** An alternative asymptotic test, which may be less accurate than the Farrington-Manning test when event rates are low.
