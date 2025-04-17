@@ -7,7 +7,9 @@ from scipy.stats import norm
 from scipy.optimize import brentq
 
 
-def _get_sd_diff_ML_null(n1: int, n2: int, p1_ml: float, p2_ml: float, delta: float) -> float:
+def _get_sd_diff_ML_null(
+    n1: int, n2: int, p1_ml: float, p2_ml: float, delta: float
+) -> float:
     """Gets the standard deviation of the rate difference under the null hypothesis (risk difference = -delta)
 
     Parameters
@@ -117,25 +119,25 @@ def farrington_manning(
     Notes
     -----
     The Farrington-Maning test for rate differences test the null hypothesis
-    of \deqn{H_{0}: p_{1} - p_{2} = \delta}{H[0]: p[1] - p[2] = \delta} for the "two.sided" alternative
-    (or \eqn{\geq}{\ge} for the "greater" respectively \eqn{\leq}{\le} for the "less" alternative).
+    of \\deqn{H_{0}: p_{1} - p_{2} = \\delta}{H[0]: p[1] - p[2] = \\delta} for the "two.sided" alternative
+    (or \\eqn{\\geq}{\\ge} for the "greater" respectively \\eqn{\\leq}{\\le} for the "less" alternative).
     This formulation allows to specify non-inferiority and superiority test in a consistent manner:
-    \describe{
-        \item{non-inferiority}{for delta < 0 and alternative == "greater" the null hypothesis
-        reads \eqn{H_{0}: p_{1} - p_{2} \geq \delta}{H[0]: p[1] - p[2] \ge \delta} and
-        consequently rejection allows concluding that \eqn{p_1 \geq p_2 + \delta}{p[1] \ge p[2] + \delta}
+    \\describe{
+        \\item{non-inferiority}{for delta < 0 and alternative == "greater" the null hypothesis
+        reads \\eqn{H_{0}: p_{1} - p_{2} \\geq \\delta}{H[0]: p[1] - p[2] \\ge \\delta} and
+        consequently rejection allows concluding that \\eqn{p_1 \\geq p_2 + \\delta}{p[1] \\ge p[2] + \\delta}
         i.e. that the rate of success in group one is at least the
         success rate in group two plus delta - as delta is negagtive this is equivalent to the success rate of group 1
         being at worst |delta| smaller than that of group 2.}
-        \item{superiority}{for delta >= 0 and alternative == "greater" the null hypothesis
-        reads \eqn{H_{0}: p_{1} - p_{2} \geq \delta}{H[0]: p[1] - p[2] \ge \delta} and
-        consequently rejection allows concluding that \eqn{p_1 \geq p_2 + \delta}{p[1] \ge p[2] + \delta}
+        \\item{superiority}{for delta >= 0 and alternative == "greater" the null hypothesis
+        reads \\eqn{H_{0}: p_{1} - p_{2} \\geq \\delta}{H[0]: p[1] - p[2] \\ge \\delta} and
+        consequently rejection allows concluding that \\eqn{p_1 \\geq p_2 + \\delta}{p[1] \\ge p[2] + \\delta}
         i.e. that the rate of success in group one is at least delta greater than the
         success rate in group two.}
     }
-    The confidence interval is always computed as two-sided, but with 1-2\eqn{\alpha} confidence level
+    The confidence interval is always computed as two-sided, but with 1-2\\eqn{\alpha} confidence level
     in case of a one-sided hypthesis. This means that the lower or upper vound are valid one-sided
-    confidence bounds at level \eqn{\alpha} in this case.
+    confidence bounds at level \\eqn{\alpha} in this case.
     The confidence interval is constructed by inverting the two-sided test directly.
     """
     if alternative.casefold() not in ["two-sided", "greater", "less"]:
@@ -153,13 +155,16 @@ def farrington_manning(
     else:
         p_value = norm.cdf(z)
     alpha_mod = alpha if alternative.casefold() == "two-sided" else 2 * alpha
-    ci_lower = brentq(_get_ci, -1+1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod))
-    ci_upper = brentq(_get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod))
+    ci_lower = brentq(
+        _get_ci, -1 + 1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod)
+    )
+    ci_upper = brentq(
+        _get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod)
+    )
     return_dict = {
         "rate_difference": diff_ml,
         "z_statistic": z,
         "p_value": p_value,
         "ci": [ci_lower, ci_upper],
-
     }
     return return_dict
