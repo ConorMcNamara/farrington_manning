@@ -118,7 +118,7 @@ def farrington_manning(
 
     Notes
     -----
-    The Farrington-Maning test for rate differences test the null hypothesis
+    The Farrington-Manning test for rate differences test the null hypothesis
     of \\deqn{H_{0}: p_{1} - p_{2} = \\delta}{H[0]: p[1] - p[2] = \\delta} for the "two.sided" alternative
     (or \\eqn{\\geq}{\\ge} for the "greater" respectively \\eqn{\\leq}{\\le} for the "less" alternative).
     This formulation allows to specify non-inferiority and superiority test in a consistent manner:
@@ -127,7 +127,7 @@ def farrington_manning(
         reads \\eqn{H_{0}: p_{1} - p_{2} \\geq \\delta}{H[0]: p[1] - p[2] \\ge \\delta} and
         consequently rejection allows concluding that \\eqn{p_1 \\geq p_2 + \\delta}{p[1] \\ge p[2] + \\delta}
         i.e. that the rate of success in group one is at least the
-        success rate in group two plus delta - as delta is negagtive this is equivalent to the success rate of group 1
+        success rate in group two plus delta - as delta is negative this is equivalent to the success rate of group 1
         being at worst |delta| smaller than that of group 2.}
         \\item{superiority}{for delta >= 0 and alternative == "greater" the null hypothesis
         reads \\eqn{H_{0}: p_{1} - p_{2} \\geq \\delta}{H[0]: p[1] - p[2] \\ge \\delta} and
@@ -136,7 +136,7 @@ def farrington_manning(
         success rate in group two.}
     }
     The confidence interval is always computed as two-sided, but with 1-2\\eqn{\alpha} confidence level
-    in case of a one-sided hypthesis. This means that the lower or upper vound are valid one-sided
+    in case of a one-sided hypothesis. This means that the lower or upper bound are valid one-sided
     confidence bounds at level \\eqn{\alpha} in this case.
     The confidence interval is constructed by inverting the two-sided test directly.
     """
