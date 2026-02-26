@@ -1,15 +1,11 @@
-from math import pi, acos, cos, sqrt
-from typing import Union
+from math import acos, cos, pi, sqrt
 
 import numpy as np
-
-from scipy.stats import norm
 from scipy.optimize import brentq
+from scipy.stats import norm
 
 
-def _get_sd_diff_ML_null(
-    n1: int, n2: int, p1_ml: float, p2_ml: float, delta: float
-) -> float:
+def _get_sd_diff_ML_null(n1: int, n2: int, p1_ml: float, p2_ml: float, delta: float) -> float:
     """Gets the standard deviation of the rate difference under the null hypothesis (risk difference = -delta)
 
     Parameters
@@ -31,17 +27,15 @@ def _get_sd_diff_ML_null(
     """
     theta = n2 / n1
     d = -p1_ml * delta * (1 + delta)
-    c = pow(delta, 2) + delta * (2 * p1_ml + theta + 1) + p1_ml + theta * p2_ml
+    c = delta**2 + delta * (2 * p1_ml + theta + 1) + p1_ml + theta * p2_ml
     b = -(1 + theta + p1_ml + theta * p2_ml + delta * (theta + 2))
     a = 1 + theta
-    v = pow(b, 3) / (27 * pow(a, 3)) - b * c / (6 * pow(a, 2)) + d / (2 * a)
-    u = np.sign(v) * sqrt(pow(b, 2) / (9 * pow(a, 2)) - c / (3 * a))
-    w = (pi + acos(v / pow(u, 3))) / 3
+    v = b**3 / (27 * a**3) - b * c / (6 * a**2) + d / (2 * a)
+    u = np.sign(v) * sqrt(b**2 / (9 * a**2) - c / (3 * a))
+    w = (pi + acos(v / u**3)) / 3
     p1_ML_null = 2 * u * cos(w) - b / (3 * a)
     p2_ML_null = p1_ML_null - delta
-    sd_diff_ML_null = sqrt(
-        p1_ML_null * (1 - p1_ML_null) / n1 + p2_ML_null * (1 - p2_ML_null) / n2
-    )
+    sd_diff_ML_null = sqrt(p1_ML_null * (1 - p1_ML_null) / n1 + p2_ML_null * (1 - p2_ML_null) / n2)
     return sd_diff_ML_null
 
 
@@ -83,12 +77,12 @@ def _get_ci(delta: float, diff_ml: float, sd_diff: float, alpha_mod: float) -> f
     The confidence interval of our test
     """
     z = _get_z(diff_ml, delta, sd_diff)
-    return 2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod
+    return float(2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod)
 
 
 def farrington_manning(
-    group1: Union[list, tuple, np.array],
-    group2: Union[list, tuple, np.array],
+    group1: list | tuple | np.ndarray,
+    group2: list | tuple | np.ndarray,
     delta: float = 0.0,
     alternative: str = "two-sided",
     alpha: float = 0.05,
@@ -155,12 +149,8 @@ def farrington_manning(
     else:
         p_value = norm.cdf(z)
     alpha_mod = alpha if alternative.casefold() == "two-sided" else 2 * alpha
-    ci_lower = brentq(
-        _get_ci, -1 + 1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod)
-    )
-    ci_upper = brentq(
-        _get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod)
-    )
+    ci_lower = brentq(_get_ci, -1 + 1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod))
+    ci_upper = brentq(_get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod))
     return_dict = {
         "rate_difference": diff_ml,
         "z_statistic": z,
