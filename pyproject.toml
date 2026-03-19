@@ -35,7 +35,7 @@ Issues = "https://github.com/ConorMcNamara/farrington_manning/issues"
 dev = [
     "pytest>=8.0.0",
     "pytest-cov>=6.0.0",
-    "mypy>=1.13.0",
+    "zuban>=0.6.2",
     "ruff>=0.8.0",
     "pre-commit>=4.0.0",
 ]
@@ -117,8 +117,8 @@ exclude_lines = [
 [tool.coverage.html]
 directory = "htmlcov"
 
-# Mypy configuration
-[tool.mypy]
+# Zuban configuration
+[tool.zuban]
 python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
@@ -132,7 +132,15 @@ warn_unused_ignores = true
 warn_no_return = true
 strict_equality = true
 extra_checks = true
+strict = true
+mode = "default"  # Or "mypy"
 
-[[tool.mypy.overrides]]
+# Recommended (and the default) for untyped code
+untyped_strict_optional = true
+
+# Mypy's default is "any", Zuban's "inferred"
+untyped_function_return_mode = "inferred"
+
+[[tool.zuban.overrides]]
 module = ["scipy.*", "numpy.*"]
 ignore_missing_imports = true

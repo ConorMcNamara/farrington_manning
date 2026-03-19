@@ -6,7 +6,7 @@ help:
 	@echo "  make install-dev        - Install development dependencies"
 	@echo "  make format             - Format code with ruff"
 	@echo "  make lint               - Lint code with ruff"
-	@echo "  make type-check         - Run type checking with mypy"
+	@echo "  make type-check         - Run type checking with zuban"
 	@echo "  make test               - Run tests with pytest"
 	@echo "  make test-cov           - Run tests with coverage report"
 	@echo "  make pre-commit-install - Install pre-commit hooks"
@@ -28,7 +28,7 @@ lint:
 	poetry run ruff check src tests
 
 type-check:
-	poetry run mypy src
+	poetry run zuban check src
 
 test:
 	poetry run pytest
@@ -48,7 +48,7 @@ clean:
 	find . -type f -name "*.pyo" -delete
 	find . -type f -name "*.coverage" -delete
 	rm -rf .pytest_cache
-	rm -rf .mypy_cache
+	rm -rf .zuban_cache
 	rm -rf .ruff_cache
 	rm -rf htmlcov
 	rm -rf dist

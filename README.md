@@ -199,7 +199,7 @@ pytest --cov=farrington_manning --cov-report=html
 ```bash
 ruff check .
 ruff format .
-mypy src/farrington_manning
+zuban check src/farrington_manning
 ```
 
 ### Pre-commit hooks

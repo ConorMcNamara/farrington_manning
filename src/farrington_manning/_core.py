@@ -1,4 +1,5 @@
 from math import acos, cos, pi, sqrt
+from typing import Any
 
 import numpy as np
 from scipy.optimize import brentq
@@ -77,16 +78,16 @@ def _get_ci(delta: float, diff_ml: float, sd_diff: float, alpha_mod: float) -> f
     The confidence interval of our test
     """
     z = _get_z(diff_ml, delta, sd_diff)
-    return float(2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod)
+    return float(2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod)  # type: ignore[no-untyped-call]
 
 
 def farrington_manning(
-    group1: list | tuple | np.ndarray,
-    group2: list | tuple | np.ndarray,
+    group1: list[int] | tuple[int, ...] | np.ndarray[Any, Any],
+    group2: list[int] | tuple[int, ...] | np.ndarray[Any, Any],
     delta: float = 0.0,
     alternative: str = "two-sided",
     alpha: float = 0.05,
-) -> dict:
+) -> dict[str, Any]:
     """The Farrington-Manning test for rate differences can be used to compare the rate difference of successes
      between two groups to a preset value. It uses an explicit formula for the standard deviation of the test
      statistic under the null hypothesis [1].
@@ -138,19 +139,19 @@ def farrington_manning(
         raise ValueError("alternative must be one of `two-sided`, `greater` or `less`")
     n1, n2 = len(group1), len(group2)
     group1, group2 = [int(val) for val in group1], [int(val) for val in group2]
-    p1_ml, p2_ml = np.mean(group1), np.mean(group2)
+    p1_ml, p2_ml = float(np.mean(group1)), float(np.mean(group2))
     diff_ml = p1_ml - p2_ml
     sd_diff_ml_null = _get_sd_diff_ML_null(n1, n2, p1_ml, p2_ml, delta)
     z = _get_z(diff_ml, delta, sd_diff_ml_null)
     if alternative.casefold() == "two-sided":
-        p_value = 2 * min(norm.sf(z), norm.cdf(z))
+        p_value = 2 * min(norm.sf(z), norm.cdf(z))  # type: ignore[no-untyped-call]
     elif alternative.casefold() == "greater":
-        p_value = norm.sf(z)
+        p_value = norm.sf(z)  # type: ignore[no-untyped-call]
     else:
-        p_value = norm.cdf(z)
+        p_value = norm.cdf(z)  # type: ignore[no-untyped-call]
     alpha_mod = alpha if alternative.casefold() == "two-sided" else 2 * alpha
-    ci_lower = brentq(_get_ci, -1 + 1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod))
-    ci_upper = brentq(_get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod))
+    ci_lower = brentq(_get_ci, -1 + 1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod))  # type: ignore[no-untyped-call]
+    ci_upper = brentq(_get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod))  # type: ignore[no-untyped-call]
     return_dict = {
         "rate_difference": diff_ml,
         "z_statistic": z,
