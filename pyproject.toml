@@ -65,13 +65,17 @@ select = [
     "ARG",    # flake8-unused-arguments
     "SIM",    # flake8-simplify
     "NPY",    # numpy-specific rules
+    "D",      # pydocstyle
 ]
 ignore = [
     "E501",   # line too long (handled by formatter)
 ]
 
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["ARG"]  # Allow unused arguments in tests
+"tests/**/*.py" = ["ARG", "D"]  # Allow unused arguments and skip docstrings in tests
 
 [tool.ruff.format]
 quote-style = "double"
