@@ -7,7 +7,7 @@ from scipy.stats import norm
 
 
 def _get_sd_diff_ML_null(n1: int, n2: int, p1_ml: float, p2_ml: float, delta: float) -> float:
-    """Gets the standard deviation of the rate difference under the null hypothesis (risk difference = -delta)
+    """Get the standard deviation of the rate difference under the null hypothesis (risk difference = -delta).
 
     Parameters
     ----------
@@ -41,7 +41,7 @@ def _get_sd_diff_ML_null(n1: int, n2: int, p1_ml: float, p2_ml: float, delta: fl
 
 
 def _get_z(diff_ml: float, delta: float, sd_diff: float) -> float:
-    """Gets the z-statistic for our test
+    """Get the z-statistic for our test.
 
     Parameters
     ----------
@@ -60,7 +60,7 @@ def _get_z(diff_ml: float, delta: float, sd_diff: float) -> float:
 
 
 def _get_ci(delta: float, diff_ml: float, sd_diff: float, alpha_mod: float) -> float:
-    """Used to get the upper and lower bounds of the confidence interval
+    """Get the upper and lower bounds of the confidence interval.
 
     Parameters
     ----------
@@ -88,9 +88,11 @@ def farrington_manning(
     alternative: str = "two-sided",
     alpha: float = 0.05,
 ) -> dict[str, Any]:
-    """The Farrington-Manning test for rate differences can be used to compare the rate difference of successes
-     between two groups to a preset value. It uses an explicit formula for the standard deviation of the test
-     statistic under the null hypothesis [1].
+    r"""Compare the rate difference of successes between two groups to a preset value.
+
+    The Farrington-Manning test for rate differences can be used to compare the rate difference of successes
+    between two groups to a preset value. It uses an explicit formula for the standard deviation of the test
+    statistic under the null hypothesis [1].
 
     Parameters
     ----------
