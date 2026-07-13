@@ -7,6 +7,56 @@ on:
     branches: [main]
 
 jobs:
+  # Derive the supported Python versions from the single source of truth:
+  # the "Programming Language :: Python :: 3.X" classifiers in pyproject.toml.
+  # To add/drop a version, just edit those classifiers — CI follows automatically.
+  setup:
+    name: Resolve Python versions
+    runs-on: ubuntu-latest
+    outputs:
+      python-versions: ${{ steps.versions.outputs.python-versions }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Extract Python versions from pyproject.toml
+        id: versions
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, sys
+          if sys.version_info >= (3, 11):
+              import tomllib
+              with open("pyproject.toml", "rb") as f:
+                  data = tomllib.load(f)
+          else:
+              import tomli
+              with open("pyproject.toml", "rb") as f:
+                  data = tomli.load(f)
+
+          prefix = "Programming Language :: Python :: "
+          versions = []
+          for c in data["project"]["classifiers"]:
+              if c.startswith(prefix):
+                  ver = c[len(prefix):].strip()
+                  # keep only "3.X" style entries (skip bare "3", "Implementation ::", etc.)
+                  if ver.count(".") == 1 and all(p.isdigit() for p in ver.split(".")):
+                      versions.append(ver)
+
+          if not versions:
+              raise SystemExit("No 'Programming Language :: Python :: 3.X' classifiers found")
+
+          versions = sorted(set(versions), key=lambda v: tuple(int(p) for p in v.split(".")))
+          print(f"python-versions={json.dumps(versions)}")
+          PY
+
+      - name: Show resolved versions
+        run: echo "Testing against ${{ steps.versions.outputs.python-versions }}"
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -35,12 +85,13 @@ jobs:
 
   test:
     name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    needs: setup
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.13", "3.14"]
+        python-version: ${{ fromJSON(needs.setup.outputs.python-versions) }}
 
     steps:
       - name: Checkout code
