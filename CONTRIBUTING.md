@@ -7,6 +7,8 @@ Thank you for your interest in contributing to farrington-manning!
 
 ## Getting started
 
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management. Install it first (see the uv docs), then:
+
 1. Fork the repository and clone your fork.
 2. Install development dependencies:
    ```bash

@@ -15,32 +15,32 @@ help:
 	@echo "  make all                - Run format, lint, type-check, and test"
 
 install:
-	poetry install --no-dev
+	uv sync --no-dev
 
 install-dev:
-	poetry install --with dev
+	uv sync
 
 format:
-	poetry run ruff format src tests
-	poetry run ruff check --fix src tests
+	uv run ruff format src tests
+	uv run ruff check --fix src tests
 
 lint:
-	poetry run ruff check src tests
+	uv run ruff check src tests
 
 type-check:
-	poetry run zuban check src
+	uv run zuban check src
 
 test:
-	poetry run pytest
+	uv run pytest
 
 test-cov:
-	poetry run pytest --cov=farrington_manning --cov-report=term-missing --cov-report=html
+	uv run pytest --cov=farrington_manning --cov-report=term-missing --cov-report=html
 
 pre-commit-install:
-	poetry run pre-commit install
+	uv run pre-commit install
 
 pre-commit-run:
-	poetry run pre-commit run --all-files
+	uv run pre-commit run --all-files
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true

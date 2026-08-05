@@ -35,11 +35,13 @@ pip install -e .
 
 ### Development installation
 
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+
 ```bash
 git clone https://github.com/ConorMcNamara/farrington_manning.git
 cd farrington_manning
-pip install -e ".[dev]"
-pre-commit install
+uv sync                 # creates a venv and installs runtime + dev dependencies
+uv run pre-commit install
 ```
 
 ## Requirements
@@ -173,9 +175,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Install development dependencies (`pip install -e ".[dev]"`)
-4. Install pre-commit hooks (`pre-commit install`)
-5. Make your changes and ensure tests pass (`pytest`)
+3. Install development dependencies (`uv sync`)
+4. Install pre-commit hooks (`uv run pre-commit install`)
+5. Make your changes and ensure tests pass (`uv run pytest`)
 6. Commit your changes (`git commit -m 'Add some amazing feature'`)
 7. Push to the branch (`git push origin feature/amazing-feature`)
 8. Open a Pull Request
