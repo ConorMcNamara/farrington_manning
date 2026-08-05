@@ -86,8 +86,7 @@ ipython_config.py
 # pipenv
 Pipfile.lock
 
-# poetry
-poetry.lock
+# uv: the lockfile is committed for reproducible installs (do not ignore uv.lock)
 
 # pdm
 .pdm.toml
