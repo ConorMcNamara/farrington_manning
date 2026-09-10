@@ -32,11 +32,14 @@ def _get_sd_diff_ML_null(n1: int, n2: int, p1_ml: float, p2_ml: float, delta: fl
     b = -(1 + theta + p1_ml + theta * p2_ml + delta * (theta + 2))
     a = 1 + theta
     v = b**3 / (27 * a**3) - b * c / (6 * a**2) + d / (2 * a)
-    u = np.sign(v) * sqrt(b**2 / (9 * a**2) - c / (3 * a))
-    w = (pi + acos(v / u**3)) / 3
-    p1_ML_null = 2 * u * cos(w) - b / (3 * a)
+    if abs(v) < 1e-12:
+        p1_ML_null = -b / (3 * a)
+    else:
+        u = np.sign(v) * sqrt(b**2 / (9 * a**2) - c / (3 * a))
+        w = (pi + acos(max(-1.0, min(1.0, v / u**3)))) / 3
+        p1_ML_null = 2 * u * cos(w) - b / (3 * a)
     p2_ML_null = p1_ML_null - delta
-    sd_diff_ML_null = sqrt(p1_ML_null * (1 - p1_ML_null) / n1 + p2_ML_null * (1 - p2_ML_null) / n2)
+    sd_diff_ML_null = sqrt(max(0.0, p1_ML_null * (1 - p1_ML_null) / n1 + p2_ML_null * (1 - p2_ML_null) / n2))
     return sd_diff_ML_null
 
 
@@ -46,7 +49,7 @@ def _get_z(diff_ml: float, delta: float, sd_diff: float) -> float:
     Parameters
     ----------
     diff_ml : float
-        The standard deviation of the rate difference under the null hypothesis
+        The observed rate difference (p1 - p2)
     delta : float
         The rate difference under the null hypothesis
     sd_diff : float
@@ -59,24 +62,33 @@ def _get_z(diff_ml: float, delta: float, sd_diff: float) -> float:
     return (diff_ml - delta) / sd_diff
 
 
-def _get_ci(delta: float, diff_ml: float, sd_diff: float, alpha_mod: float) -> float:
-    """Get the upper and lower bounds of the confidence interval.
+def _get_ci(delta: float, n1: int, n2: int, p1_ml: float, p2_ml: float, diff_ml: float, alpha_mod: float) -> float:
+    """Get the residual for root-finding when constructing the confidence interval.
 
     Parameters
     ----------
     delta : float
-        The rate difference under the null hypothesis
+        The candidate rate difference (varied by the root-finder)
+    n1 : int
+        Number of users in Group 1
+    n2 : int
+        Number of users in Group 2
+    p1_ml : float
+        The observed probability of success in Group 1
+    p2_ml : float
+        The observed probability of success in Group 2
     diff_ml : float
-        The standard deviation of the rate difference under the null hypothesis
-    sd_diff : float
-        The standard deviation of the rate difference under the null hypothesis
+        The observed rate difference (p1 - p2)
     alpha_mod : float
         The value of our alpha level.
 
     Returns
     -------
-    The confidence interval of our test
+    The two-sided p-value at this candidate delta minus alpha_mod
     """
+    sd_diff = _get_sd_diff_ML_null(n1, n2, p1_ml, p2_ml, delta)
+    if sd_diff == 0:
+        return -alpha_mod
     z = _get_z(diff_ml, delta, sd_diff)
     return float(2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod)  # type: ignore[no-untyped-call]
 
@@ -117,17 +129,17 @@ def farrington_manning(
     -----
     The Farrington-Manning test for rate differences test the null hypothesis
     of \\deqn{H_{0}: p_{1} - p_{2} = \\delta}{H[0]: p[1] - p[2] = \\delta} for the "two.sided" alternative
-    (or \\eqn{\\geq}{\\ge} for the "greater" respectively \\eqn{\\leq}{\\le} for the "less" alternative).
+    (or \\eqn{\\leq}{\\le} for the "greater" respectively \\eqn{\\geq}{\\ge} for the "less" alternative).
     This formulation allows to specify non-inferiority and superiority test in a consistent manner:
     \\describe{
         \\item{non-inferiority}{for delta < 0 and alternative == "greater" the null hypothesis
-        reads \\eqn{H_{0}: p_{1} - p_{2} \\geq \\delta}{H[0]: p[1] - p[2] \\ge \\delta} and
+        reads \\eqn{H_{0}: p_{1} - p_{2} \\leq \\delta}{H[0]: p[1] - p[2] \\le \\delta} and
         consequently rejection allows concluding that \\eqn{p_1 \\geq p_2 + \\delta}{p[1] \\ge p[2] + \\delta}
         i.e. that the rate of success in group one is at least the
         success rate in group two plus delta - as delta is negative this is equivalent to the success rate of group 1
         being at worst |delta| smaller than that of group 2.}
         \\item{superiority}{for delta >= 0 and alternative == "greater" the null hypothesis
-        reads \\eqn{H_{0}: p_{1} - p_{2} \\geq \\delta}{H[0]: p[1] - p[2] \\ge \\delta} and
+        reads \\eqn{H_{0}: p_{1} - p_{2} \\leq \\delta}{H[0]: p[1] - p[2] \\le \\delta} and
         consequently rejection allows concluding that \\eqn{p_1 \\geq p_2 + \\delta}{p[1] \\ge p[2] + \\delta}
         i.e. that the rate of success in group one is at least delta greater than the
         success rate in group two.}
@@ -144,6 +156,11 @@ def farrington_manning(
     p1_ml, p2_ml = float(np.mean(group1)), float(np.mean(group2))
     diff_ml = p1_ml - p2_ml
     sd_diff_ml_null = _get_sd_diff_ML_null(n1, n2, p1_ml, p2_ml, delta)
+    if sd_diff_ml_null == 0:
+        raise ValueError(
+            "The null-constrained variance is zero. This occurs when all observations are identical "
+            "(e.g. all successes or all failures) and the test statistic is undefined."
+        )
     z = _get_z(diff_ml, delta, sd_diff_ml_null)
     if alternative.casefold() == "two-sided":
         p_value = 2 * min(norm.sf(z), norm.cdf(z))  # type: ignore[no-untyped-call]
@@ -152,8 +169,8 @@ def farrington_manning(
     else:
         p_value = norm.cdf(z)  # type: ignore[no-untyped-call]
     alpha_mod = alpha if alternative.casefold() == "two-sided" else 2 * alpha
-    ci_lower = brentq(_get_ci, -1 + 1e-6, diff_ml, args=(diff_ml, sd_diff_ml_null, alpha_mod))  # type: ignore[no-untyped-call]
-    ci_upper = brentq(_get_ci, diff_ml, 1 - 1e-06, args=(diff_ml, sd_diff_ml_null, alpha_mod))  # type: ignore[no-untyped-call]
+    ci_lower = brentq(_get_ci, -1 + 1e-6, diff_ml, args=(n1, n2, p1_ml, p2_ml, diff_ml, alpha_mod))  # type: ignore[no-untyped-call]
+    ci_upper = brentq(_get_ci, diff_ml, 1 - 1e-06, args=(n1, n2, p1_ml, p2_ml, diff_ml, alpha_mod))  # type: ignore[no-untyped-call]
     return_dict = {
         "rate_difference": diff_ml,
         "z_statistic": z,

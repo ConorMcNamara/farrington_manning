@@ -153,8 +153,8 @@ The Farrington-Manning test is particularly useful for:
 The test formulates hypotheses as:
 
 - **Two-sided**: H₀: p₁ - p₂ = δ
-- **Greater**: H₀: p₁ - p₂ ≥ δ
-- **Less**: H₀: p₁ - p₂ ≤ δ
+- **Greater**: H₀: p₁ - p₂ ≤ δ
+- **Less**: H₀: p₁ - p₂ ≥ δ
 
 For non-inferiority testing with delta < 0 and alternative="greater", rejection of the null hypothesis allows concluding that the rate of success in group 1 is at worst |delta| smaller than that of group 2.
 
