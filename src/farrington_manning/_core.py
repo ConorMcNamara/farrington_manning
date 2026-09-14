@@ -88,7 +88,7 @@ def _get_ci(delta: float, n1: int, n2: int, p1_ml: float, p2_ml: float, diff_ml:
     """
     sd_diff = _get_sd_diff_ML_null(n1, n2, p1_ml, p2_ml, delta)
     if sd_diff == 0:
-        return -alpha_mod
+        return 1 - alpha_mod
     z = _get_z(diff_ml, delta, sd_diff)
     return float(2 * min(norm.sf(z), norm.cdf(z)) - alpha_mod)  # type: ignore[no-untyped-call]
 
