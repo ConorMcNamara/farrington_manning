@@ -66,15 +66,15 @@ result = farrington_manning(group1, group2, delta=-0.3, alternative="greater")
 print(f"P-value: {result['p_value']:.6f}")
 print(f"Rate difference: {result['rate_difference']:.4f}")
 print(f"Z-statistic: {result['z_statistic']:.4f}")
-print(f"95% CI: [{result['ci'][0]:.4f}, {result['ci'][1]:.4f}]")
+print(f"90% CI: [{result['ci'][0]:.4f}, {result['ci'][1]:.4f}]")
 ```
 
 Output:
 ```
 P-value: 0.000804
-Rate difference: 0.0229
-Z-statistic: 3.21
-95% CI: [-0.1825, 0.2282]
+Rate difference: 0.0260
+Z-statistic: 3.1546
+90% CI: [-0.1498, 0.1972]
 ```
 
 ## Usage Examples
